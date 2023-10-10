@@ -52,8 +52,6 @@ namespace TicketingApp.Service
 
                     decimal price = (decimal)(Tdestination.StationCount - TstartLocation.StationCount) * 75; // Adjust with your pricing logic
 
-
-
                     // Calculate new RemainingSeats
                     int newRemainingSeats = trainService.RemainingSeats - newReservation.SeatCount;
 
