@@ -58,7 +58,7 @@ builder.Services.ConfigureMongoDbIdentity<ApplicationUser, ApplicationRole, Guid
 
 builder.Services.AddSingleton<ReservationService>();
 builder.Services.AddSingleton<TrainService>();
-
+builder.Services.AddSingleton<StationService>();
 
 builder.Services.AddAuthentication(x =>
 {

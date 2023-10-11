@@ -51,15 +51,15 @@ namespace TicketingApp.Service
                         .Find(ss => ss.StationName == newReservation.StartLocation);
 
                     decimal price = 0;
-                    if (trainService.TrainClass == "A")
+                    if (reservation.TrainClass == "A")
                     {
                         price = (decimal)(Tdestination.StationCount - TstartLocation.StationCount) * 100;
                     }
-                    else if (trainService.TrainClass == "B")
+                    else if (reservation.TrainClass == "B")
                     {
                         price = (decimal)(Tdestination.StationCount - TstartLocation.StationCount) * 75;
                     }
-                    else if (trainService.TrainClass == "C")
+                    else if (reservation.TrainClass == "C")
                     {
                         price = (decimal)(Tdestination.StationCount - TstartLocation.StationCount) * 50;
                     }

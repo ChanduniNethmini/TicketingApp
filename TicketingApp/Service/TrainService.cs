@@ -96,7 +96,8 @@ namespace TicketingApp.Service
         {
             var filterBuilder = Builders<TrainSchedule>.Filter;
             var filter = filterBuilder.Gte("Date", date) &
-                         filterBuilder.Gte("RemainingSeats", minAvailableSeatCount);
+                         filterBuilder.Gte("RemainingSeats", minAvailableSeatCount) &
+                         filterBuilder.Gte("IsActive", 1);
 
             // Fetch all train schedules that meet the date and seat count criteria
             var matchingTrains = _trainScheduleCollection
