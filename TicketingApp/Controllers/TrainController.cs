@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using TicketingApp.Dtos;
 using TicketingApp.Models;
 using TicketingApp.Service;
 
@@ -71,5 +72,26 @@ namespace TicketingApp.Controllers
             }
             return BadRequest("Train Schedule not found.");
         }
+
+        [HttpGet]
+        [Route("search")]
+        public ActionResult<List<TrainSearchResult>> SearchTrains(
+        [FromQuery] string fromStationName,
+        [FromQuery] string toStationName,
+        [FromQuery] DateTime date,
+        [FromQuery] int minAvailableSeatCount = 1)
+        {
+            List<TrainSearchResult> matchingTrains = _trainService.SearchTrains(fromStationName, toStationName, date, minAvailableSeatCount);
+
+            if (matchingTrains.Count > 0)
+            {
+                return Ok(matchingTrains);
+            }
+
+            return BadRequest("No matching trains found.");
+        }
+
+
+
     }
 }

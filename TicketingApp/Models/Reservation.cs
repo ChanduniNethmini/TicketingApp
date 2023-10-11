@@ -27,8 +27,8 @@ namespace TicketingApp.Models
         [BsonElement("destination")]
         public string Destination { get; set; }
 
-        [BsonElement("class")]
-        public string Class { get; set; }
+        [BsonElement("trainclass")]
+        public string TrainClass { get; set; }
 
         [BsonElement("departureTime")]
         public DateTime DepartureTime { get; set; }

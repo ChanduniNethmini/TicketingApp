@@ -27,9 +27,9 @@ namespace TicketingApp.Service
                 TrainID = reservation.TrainID,
                 StartLocation = reservation.StartLocation,
                 Destination = reservation.Destination,
-                Class = reservation.Class,
+                TrainClass = reservation.TrainClass,
                 DepartureTime = reservation.DepartureTime,
-                Status = 0, //Not Confirmed
+                Status = 1, //Confirmed
                 SeatCount = reservation.SeatCount,
                 Price = 0
             };
@@ -50,7 +50,19 @@ namespace TicketingApp.Service
                     var TstartLocation = trainService.StoppingStations
                         .Find(ss => ss.StationName == newReservation.StartLocation);
 
-                    decimal price = (decimal)(Tdestination.StationCount - TstartLocation.StationCount) * 75; // Adjust with your pricing logic
+                    decimal price = 0;
+                    if (trainService.TrainClass == "A")
+                    {
+                        price = (decimal)(Tdestination.StationCount - TstartLocation.StationCount) * 100;
+                    }
+                    else if (trainService.TrainClass == "B")
+                    {
+                        price = (decimal)(Tdestination.StationCount - TstartLocation.StationCount) * 75;
+                    }
+                    else if (trainService.TrainClass == "C")
+                    {
+                        price = (decimal)(Tdestination.StationCount - TstartLocation.StationCount) * 50;
+                    }
 
                     // Calculate new RemainingSeats
                     int newRemainingSeats = trainService.RemainingSeats - newReservation.SeatCount;

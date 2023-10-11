@@ -1,4 +1,5 @@
 ﻿using MongoDB.Driver;
+using TicketingApp.Dtos;
 using TicketingApp.Models;
 
 namespace TicketingApp.Service
@@ -22,7 +23,7 @@ namespace TicketingApp.Service
                     StartTime = trainSchedule.StartTime,
                     StartLocation = trainSchedule.StartLocation,
                     Destination = trainSchedule.Destination,
-                    Class = trainSchedule.Class,
+                    TrainClass = trainSchedule.TrainClass,
                     SeatCount = trainSchedule.SeatCount,
                     IsActive = 1,
                     RemainingSeats = trainSchedule.SeatCount,
@@ -90,5 +91,89 @@ namespace TicketingApp.Service
                 .Find(r => r.ID == id)
                 .ToList();
         }
+
+        public List<TrainSearchResult> SearchTrains(string fromStationName, string toStationName, DateTime date, int minAvailableSeatCount)
+        {
+            var filterBuilder = Builders<TrainSchedule>.Filter;
+            var filter = filterBuilder.Gte("Date", date) &
+                         filterBuilder.Gte("RemainingSeats", minAvailableSeatCount);
+
+            // Fetch all train schedules that meet the date and seat count criteria
+            var matchingTrains = _trainScheduleCollection
+                .Find(filter)
+                .ToList();
+
+            // Filter and calculate the ticket price in memory
+            var searchResults = matchingTrains
+                .Where(trainSchedule =>
+                    trainSchedule.StoppingStations.Any(ss => ss.StationName == fromStationName) &&
+                    trainSchedule.StoppingStations.Any(ss => ss.StationName == toStationName) &&
+                    GetStationCount(trainSchedule, fromStationName) < GetStationCount(trainSchedule, toStationName))
+                .Select(trainSchedule => new TrainSearchResult
+                {
+                    Name = trainSchedule.Name,
+                    Date = trainSchedule.Date,
+                    StartLocation = fromStationName,
+                    Destination = toStationName,
+                    TrainClass = trainSchedule.TrainClass,
+                    AvailableSeats = trainSchedule.RemainingSeats,
+                    TicketPrice = CalculateTicketPrice(trainSchedule, fromStationName, toStationName),
+                    TotalPrice = CalculateTicketPrice(trainSchedule, fromStationName, toStationName) * minAvailableSeatCount,
+                    StartLocationArrivalTime = GetArrivalTime(trainSchedule, fromStationName),
+                    StartLocationDepartureTime = GetDepartureTime(trainSchedule, fromStationName)
+                })
+                .ToList();
+
+            return searchResults;
+        }
+
+        private int GetStationCount(TrainSchedule trainSchedule, string stationName)
+        {
+            var stoppingStation = trainSchedule.StoppingStations.Find(ss => ss.StationName == stationName);
+            return stoppingStation != null ? stoppingStation.StationCount : 0;
+        }
+        public DateTime GetArrivalTime(TrainSchedule trainSchedule, string stationName)
+        {
+            var stoppingStation = trainSchedule.StoppingStations.FirstOrDefault(ss => ss.StationName == stationName);
+            return stoppingStation != null ? stoppingStation.ArrivalTime : DateTime.MinValue;
+        }
+
+        public DateTime GetDepartureTime(TrainSchedule trainSchedule, string stationName)
+        {
+            var stoppingStation = trainSchedule.StoppingStations.FirstOrDefault(ss => ss.StationName == stationName);
+            return stoppingStation != null ? stoppingStation.DepartureTime : DateTime.MinValue;
+        }
+
+        private decimal CalculateTicketPrice(TrainSchedule trainSchedule, string startLocation, string destination)
+        {
+            var Tdestination = trainSchedule.StoppingStations.Find(ss => ss.StationName == destination);
+            var TstartLocation = trainSchedule.StoppingStations.Find(ss => ss.StationName == startLocation);
+
+            if (trainSchedule.TrainClass == "A")
+            {
+                if (Tdestination != null && TstartLocation != null)
+                {
+                    return (decimal)(Tdestination.StationCount - TstartLocation.StationCount) * 100;
+                }
+            }
+            else if (trainSchedule.TrainClass == "B")
+            {
+                if (Tdestination != null && TstartLocation != null)
+                {
+                    return (decimal)(Tdestination.StationCount - TstartLocation.StationCount) * 75;
+                }
+            }
+            else if (trainSchedule.TrainClass == "C")
+            {
+                if (Tdestination != null && TstartLocation != null)
+                {
+                    return (decimal)(Tdestination.StationCount - TstartLocation.StationCount) * 50;
+                }
+            }
+
+
+            return 0;
+        }
+
     }
 }
