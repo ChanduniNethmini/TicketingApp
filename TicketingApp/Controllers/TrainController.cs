@@ -55,10 +55,6 @@ namespace TicketingApp.Controllers
         public ActionResult<List<TrainSchedule>> GetAllTrains()
         {
             List<TrainSchedule> trainSchedules = _trainService.GetAllTrains();
-            foreach (var trainSchedule in trainSchedules)
-            {
-                trainSchedule.Date = trainSchedule.Date.AddHours(5.5);
-            }
             return Ok(trainSchedules);
         }
 

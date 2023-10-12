@@ -31,7 +31,7 @@ namespace TicketingApp.Service
                 DepartureTime = reservation.DepartureTime,
                 Status = 1,
                 SeatCount = reservation.SeatCount,
-                Price = reservation.Price,
+                Price = 0,
             };
 
             if ((newReservation.ReservationDate - newReservation.BookingDate).Days <= 30)
