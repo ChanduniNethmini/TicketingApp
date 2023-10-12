@@ -29,9 +29,9 @@ namespace TicketingApp.Service
                 Destination = reservation.Destination,
                 TrainClass = reservation.TrainClass,
                 DepartureTime = reservation.DepartureTime,
-                Status = 1, //Confirmed
+                Status = reservation.Status,
                 SeatCount = reservation.SeatCount,
-                Price = 0
+                Price = reservation.Price,
             };
 
             if ((newReservation.ReservationDate - newReservation.BookingDate).Days <= 30)
@@ -79,6 +79,8 @@ namespace TicketingApp.Service
                         }
 
                         // Update RemainingSeats in TrainService
+
+                        newReservation.Status = 1;
                         var update = Builders<TrainSchedule>.Update.Set(ts => ts.RemainingSeats, newRemainingSeats);
                         _trainScheduleCollection.UpdateOne(trainServiceFilter, update);
                         newReservation.Price = price * newReservation.SeatCount;

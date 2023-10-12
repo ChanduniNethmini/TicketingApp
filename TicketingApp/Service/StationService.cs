@@ -18,9 +18,10 @@ namespace TicketingApp.Service
                 Station newStation = new Station
                 {
                     StationName = station.StationName,
-                    IsActive = 1
+                    IsActive = station.IsActive,
                 };
 
+                newStation.IsActive = 1;
                 _stationCollection.InsertOne(newStation);
                 return true;
             }

@@ -25,11 +25,11 @@ namespace TicketingApp.Service
                     Destination = trainSchedule.Destination,
                     TrainClass = trainSchedule.TrainClass,
                     SeatCount = trainSchedule.SeatCount,
-                    IsActive = 1,
+                    IsActive = trainSchedule.IsActive,
                     RemainingSeats = trainSchedule.SeatCount,
                     StoppingStations = trainSchedule.StoppingStations
                 };
-
+                newtrainSchedule.IsActive = 1;
                 _trainScheduleCollection.InsertOne(newtrainSchedule);
                 return true;
             }
