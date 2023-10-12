@@ -51,7 +51,6 @@ builder.Services.AddSingleton<IMongoDatabase>(mongoDatabase); // Register IMongo
 
 builder.Services.AddSingleton<ReservationService>();
 builder.Services.AddSingleton<TrainService>();
-builder.Services.AddSingleton<StationService>();
 builder.Services.AddSingleton<TravelerService>();
 builder.Services.AddSingleton<UserService>();
 builder.Services.AddSingleton<ReservationServiceNew>();
