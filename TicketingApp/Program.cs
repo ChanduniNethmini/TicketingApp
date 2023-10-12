@@ -3,7 +3,6 @@ using AspNetCore.Identity.MongoDbCore.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
-using MongoAuthenticatorAPI.Models;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
@@ -25,40 +24,37 @@ var mongoDatabase = mongoClient.GetDatabase(databaseName);
 
 builder.Services.AddSingleton<IMongoDatabase>(mongoDatabase); // Register IMongoDatabase
 
-//Add mongoIdentityConfiguration
-var mongoDbIdentityConfig = new MongoDbIdentityConfiguration
-{
-    MongoDbSettings = new MongoDbSettings
-    {
-        ConnectionString = connectionString,
-        DatabaseName = databaseName
-    },
-    IdentityOptionsAction = options =>
-    {
-        options.Password.RequireDigit = false;
-        options.Password.RequiredLength = 8;
-        options.Password.RequireNonAlphanumeric = true;
-        options.Password.RequireLowercase = false;
+////Add mongoIdentityConfiguration
+//var mongoDbIdentityConfig = new MongoDbIdentityConfiguration
+//{
+//    MongoDbSettings = new MongoDbSettings
+//    {
+//        ConnectionString = connectionString,
+//        DatabaseName = databaseName
+//    },
+//    IdentityOptionsAction = options =>
+//    {
+//        options.Password.RequireDigit = false;
+//        options.Password.RequiredLength = 8;
+//        options.Password.RequireNonAlphanumeric = true;
+//        options.Password.RequireLowercase = false;
 
-        //lockout
-        options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
-        options.Lockout.MaxFailedAccessAttempts = 5;
+//        //lockout
+//        options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
+//        options.Lockout.MaxFailedAccessAttempts = 5;
 
-        options.User.RequireUniqueEmail = true;
+//        options.User.RequireUniqueEmail = true;
 
-    }
+//    }
 
-};
-
-builder.Services.ConfigureMongoDbIdentity<ApplicationUser, ApplicationRole, Guid>(mongoDbIdentityConfig)
-    .AddUserManager<UserManager<ApplicationUser>>()
-    .AddSignInManager<SignInManager<ApplicationUser>>()
-    .AddRoleManager<RoleManager<ApplicationRole>>()
-    .AddDefaultTokenProviders();
+//};
 
 builder.Services.AddSingleton<ReservationService>();
 builder.Services.AddSingleton<TrainService>();
 builder.Services.AddSingleton<StationService>();
+builder.Services.AddSingleton<TravelerService>();
+builder.Services.AddSingleton<UserService>();
+builder.Services.AddSingleton<ReservationServiceNew>();
 
 builder.Services.AddAuthentication(x =>
 {

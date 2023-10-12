@@ -54,7 +54,7 @@ namespace TicketingApp.Controllers
         [Route("getAll")]
         public ActionResult<List<TrainSchedule>> GetAllTrains()
         {
-            List<TrainSchedule> trainSchedules = _trainService.GetAllTrains();
+            List<TrainSchedule> trainSchedules = _trainService.GetAllOngoingTrains();
             return Ok(trainSchedules);
         }
 
@@ -77,14 +77,19 @@ namespace TicketingApp.Controllers
         [FromQuery] DateTime date,
         [FromQuery] int minAvailableSeatCount = 1)
         {
-            List<TrainSearchResult> matchingTrains = _trainService.SearchTrains(fromStationName, toStationName, date, minAvailableSeatCount);
-
-            if (matchingTrains.Count > 0)
+            if (date.Date > DateTime.Now.Date)
             {
-                return Ok(matchingTrains);
+                List<TrainSearchResult> matchingTrains = _trainService.SearchTrains(fromStationName, toStationName, date, minAvailableSeatCount);
+
+                if (matchingTrains.Count > 0)
+                {
+                    return Ok(matchingTrains);
+                }
+
+                return BadRequest("No matching trains found.");
             }
 
-            return BadRequest("No matching trains found.");
+            return BadRequest("Booking must be made at least one day before the booking date.");
         }
 
 

@@ -70,7 +70,7 @@ namespace TicketingApp.Service
                     if (newRemainingSeats >= 0)
                     {
                         var existingReservations = _reservationCollection
-                        .Find(r => r.TravelerID == newReservation.TravelerID && r.Status != 3)
+                        .Find(r => r.TravelerID == newReservation.TravelerID && r.Status == 1)
                         .ToList();
 
                         if (existingReservations.Count >= 4)
@@ -99,7 +99,7 @@ namespace TicketingApp.Service
         public bool UpdateReservation(string id, Reservation updatedReservation)
         {
             var existingReservation = _reservationCollection
-                .Find(r => r.ID == id)
+                .Find(r => r.ID == id && r.Status == 1)
                 .FirstOrDefault();
 
             if (existingReservation != null)
@@ -116,21 +116,29 @@ namespace TicketingApp.Service
         }
 
         //Cancel a reservation
-        // status = 3 means canceled orders
+        // status = 3 means canceled 
         public bool CancelReservation(string reservationId)
         {
             var reservationToCancel = _reservationCollection
-                .Find(r => r.ID == reservationId && r.Status != 3)
+                .Find(r => r.ID == reservationId && r.Status != 3 && r.Status != 2)
                 .FirstOrDefault();
+
+            var trainServiceFilter = Builders<TrainSchedule>.Filter.Eq(ts => ts.ID, reservationToCancel.ID)
+                    & Builders<TrainSchedule>.Filter.Eq(ts => ts.Date, reservationToCancel.ReservationDate);
+
+            var trainService = _trainScheduleCollection.Find(trainServiceFilter).FirstOrDefault();
 
             if (reservationToCancel != null)
             {
                 if ((reservationToCancel.ReservationDate - DateTime.Now).Days >= 5)
                 {
                     reservationToCancel.Status = 3;
+                    int newRemainingSeats = trainService.RemainingSeats + reservationToCancel.SeatCount;
+                    var update = Builders<TrainSchedule>.Update.Set(ts => ts.RemainingSeats, newRemainingSeats);
+                    _trainScheduleCollection.UpdateOne(trainServiceFilter, update);
                     _reservationCollection.ReplaceOne(r => r.ID == reservationId, reservationToCancel);
                     return true;
-                }//seat count wadi krpn
+                }
             }
 
             return false;

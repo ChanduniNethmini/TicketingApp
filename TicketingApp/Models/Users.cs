@@ -1,17 +1,18 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
-using MongoDbGenericRepository.Attributes;
 using System.ComponentModel.DataAnnotations;
+using MongoDbGenericRepository.Attributes;
 
 namespace TicketingApp.Models
 {
-    [CollectionName("traveller")]
-    public class Traveller
+    [CollectionName("users")]
+    public class Users
     {
         [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string? ID { get; set; }
+
         [BsonElement("nic")]
-        [BsonRepresentation(BsonType.String)]
-        [BsonRequired]
         public string NIC { get; set; }
 
         [BsonElement("name")]
@@ -34,5 +35,8 @@ namespace TicketingApp.Models
 
         [BsonElement("status")]
         public int Status { get; set; }
+
+        [BsonElement("role")]
+        public string Role { get; set; }
     }
 }

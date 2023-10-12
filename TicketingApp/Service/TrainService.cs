@@ -77,10 +77,15 @@ namespace TicketingApp.Service
             return false;
         }
 
-        public List<TrainSchedule> GetAllTrains()
+        public List<TrainSchedule> GetAllOngoingTrains()
         {
+            var filter = Builders<TrainSchedule>.Filter.And(
+            Builders<TrainSchedule>.Filter.Eq("IsActive", 1),
+            Builders<TrainSchedule>.Filter.Gte("StartTime", DateTime.Now)
+            );
+
             return _trainScheduleCollection
-                .Find(r => r.IsActive != 0)
+                .Find(filter)
                 .ToList();
         }
 
@@ -96,8 +101,9 @@ namespace TicketingApp.Service
         {
             var filterBuilder = Builders<TrainSchedule>.Filter;
             var filter = filterBuilder.Gte("Date", date) &
+                         filterBuilder.Lt("Date", date.AddDays(1)) &
                          filterBuilder.Gte("RemainingSeats", minAvailableSeatCount) &
-                         filterBuilder.Gte("IsActive", 1);
+                         filterBuilder.Eq("IsActive", 1);
 
             // Fetch all train schedules that meet the date and seat count criteria
             var matchingTrains = _trainScheduleCollection
