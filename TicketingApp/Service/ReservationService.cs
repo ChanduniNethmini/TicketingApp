@@ -29,7 +29,7 @@ namespace TicketingApp.Service
                 Destination = reservation.Destination,
                 TrainClass = reservation.TrainClass,
                 DepartureTime = reservation.DepartureTime,
-                Status = reservation.Status,
+                Status = 1,
                 SeatCount = reservation.SeatCount,
                 Price = reservation.Price,
             };
@@ -79,8 +79,6 @@ namespace TicketingApp.Service
                         }
 
                         // Update RemainingSeats in TrainService
-
-                        newReservation.Status = 1;
                         var update = Builders<TrainSchedule>.Update.Set(ts => ts.RemainingSeats, newRemainingSeats);
                         _trainScheduleCollection.UpdateOne(trainServiceFilter, update);
                         newReservation.Price = price * newReservation.SeatCount;
@@ -132,7 +130,7 @@ namespace TicketingApp.Service
                     reservationToCancel.Status = 3;
                     _reservationCollection.ReplaceOne(r => r.ID == reservationId, reservationToCancel);
                     return true;
-                }
+                }//seat count wadi krpn
             }
 
             return false;
@@ -157,7 +155,7 @@ namespace TicketingApp.Service
                 .ToList();
         }
 
-        // status = 2 means existing bookings
+        // status = 2 means Completed bookings
         public List<Reservation> GetReservationHistoryForTraveler(int travelerId)
         {
 
