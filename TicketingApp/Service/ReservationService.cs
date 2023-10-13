@@ -21,7 +21,7 @@ namespace TicketingApp.Service
         {
             Reservation newReservation = new Reservation
             {
-                TravelerID = reservation.TravelerID,
+                NIC = reservation.NIC,
                 ReservationDate = reservation.ReservationDate,
                 BookingDate = DateTime.Now,
                 TrainID = reservation.TrainID,
@@ -70,7 +70,7 @@ namespace TicketingApp.Service
                     if (newRemainingSeats >= 0)
                     {
                         var existingReservations = _reservationCollection
-                        .Find(r => r.TravelerID == newReservation.TravelerID && r.Status == 1)
+                        .Find(r => r.NIC == newReservation.NIC && r.Status == 1)
                         .ToList();
 
                         if (existingReservations.Count >= 4)
@@ -155,20 +155,20 @@ namespace TicketingApp.Service
 
         //Get a list of reservations for a specific traveler
         // status = 1 means existing bookings
-        public List<Reservation> GetExistingReservationsForTraveler(int travelerId)
+        public List<Reservation> GetExistingReservationsForTraveler(string nic)
         {
 
             return _reservationCollection
-                .Find(r => r.TravelerID == travelerId && r.Status == 1)
+                .Find(r => r.NIC == nic && r.Status == 1)
                 .ToList();
         }
 
         // status = 2 means Completed bookings
-        public List<Reservation> GetReservationHistoryForTraveler(int travelerId)
+        public List<Reservation> GetReservationHistoryForTraveler(string nic)
         {
 
             return _reservationCollection
-                .Find(r => r.TravelerID == travelerId && r.Status != 1)
+                .Find(r => r.NIC == nic && r.Status != 1)
                 .ToList();
         }
     }

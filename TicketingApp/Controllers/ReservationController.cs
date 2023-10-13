@@ -50,10 +50,10 @@ namespace TicketingApp.Controllers
             return BadRequest("Reservation cancellation failed due to validation constraints or reservation not found.");
         }
 
-        [HttpGet("traveler/{travelerId}")]
-        public ActionResult<List<Reservation>> GetExistingReservationsForTraveler(int travelerId)
+        [HttpGet("traveler/{nic}")]
+        public ActionResult<List<Reservation>> GetExistingReservationsForTraveler(string nic)
         {
-            List<Reservation> reservations = _reservationService.GetExistingReservationsForTraveler(travelerId);
+            List<Reservation> reservations = _reservationService.GetExistingReservationsForTraveler(nic);
             if (reservations.Count != 0)
             {
                 return Ok(reservations);
@@ -74,10 +74,10 @@ namespace TicketingApp.Controllers
             return Ok(reservations);
         }
 
-        [HttpGet("traveler/history/{travelerId}")]
-        public ActionResult<List<Reservation>> GetReservationHistoryForTraveler(int travelerId)
+        [HttpGet("traveler/history/{nic}")]
+        public ActionResult<List<Reservation>> GetReservationHistoryForTraveler(string nic)
         {
-            List<Reservation> reservations = _reservationService.GetReservationHistoryForTraveler(travelerId);
+            List<Reservation> reservations = _reservationService.GetReservationHistoryForTraveler(nic);
             if (reservations.Count != 0)
             {
                 return Ok(reservations);

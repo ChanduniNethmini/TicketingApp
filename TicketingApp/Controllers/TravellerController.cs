@@ -55,7 +55,7 @@ namespace TicketingApp.Controllers
             return BadRequest("Traveler profile creation failed due to validation constraints.");
         }
 
-        [HttpPut("update/{id}")]
+        [HttpPut("update/{nic}")]
         public ActionResult UpdateTraveler(string nic, Traveller traveler)
         {
             bool updated = _travelerService.UpdateTraveler(nic, traveler);
@@ -66,7 +66,7 @@ namespace TicketingApp.Controllers
             return BadRequest("Traveler profile update failed due to validation constraints or profile not found.");
         }
 
-        [HttpDelete("delete/{id}")]
+        [HttpDelete("delete/{nic}")]
         public ActionResult DeleteTraveler(string nic)
         {
             bool canceled = _travelerService.DeleteTraveler(nic);
@@ -74,29 +74,58 @@ namespace TicketingApp.Controllers
             {
                 return Ok("Traveler profile deleted successfully.");
             }
-            return BadRequest("Traveler profile delete failed due to validation constraints or Profile not found.");
+            return BadRequest("Traveler profile delete failed due to Profile not found.");
         }
 
-        [HttpPut("update/active/{id}")]
+        [HttpPut("update/active/{nic}")]
         public ActionResult ActivateTraveler(string nic)
         {
-            bool statusupdated = _travelerService.ActivateTraveler(nic);
-            if (statusupdated)
+            var traveler = _travelerService.GetTravelerByNIC(nic);
+            if (traveler != null)
             {
-                return Ok($"Traveler account activated successfully.");
+                bool statusupdated = _travelerService.ActivateTraveler(nic);
+                if (statusupdated)
+                {
+                    return Ok($"Traveler account activated successfully.");
+                }
+                return BadRequest("Traveler account already Ativated.");
             }
-            return BadRequest("Traveler account activation failed due to Profile not found.");
+            else
+            {
+                return BadRequest("Traveler account activation failed due to Profile not found.");
+            }
         }
 
-        [HttpPut("update/deactivate/{id}")]
+        [HttpPut("update/deactive/{nic}")]
         public ActionResult DeactiveTraveler(string nic)
         {
-            bool statusupdated = _travelerService.DeactivateTraveler(nic);
-            if (statusupdated)
+            var traveler = _travelerService.GetTravelerByNIC(nic);
+            if (traveler != null)
             {
-                return Ok($"Traveler account deactivated successfully.");
+                bool statusupdated = _travelerService.DeactivateTraveler(nic);
+                if (statusupdated)
+                {
+                    return Ok($"Traveler account deactivated successfully.");
+                }
+                return BadRequest("Traveler account already Deativated.");
             }
-            return BadRequest("Traveler account deactivation failed due to Profile not found.");
+            else
+            {
+                return BadRequest("Traveler account deactivation failed due to Profile not found.");
+            }
+
+        }
+
+
+        [HttpGet("get/{nic}")]
+        public ActionResult<List<Traveller>> GetTravelerByNIC(string nic)
+        {
+            List<Traveller> traveller = _travelerService.GetTravelerByNIC(nic);
+            if (traveller.Count != 0)
+            {
+                return Ok(traveller);
+            }
+            return BadRequest("Traveler not found.");
         }
 
         [HttpGet]

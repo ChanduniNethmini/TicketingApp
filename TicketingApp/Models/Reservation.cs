@@ -9,8 +9,8 @@ namespace TicketingApp.Models
         [BsonRepresentation(BsonType.ObjectId)]
         public string? ID { get; set; }
 
-        [BsonElement("travelerID")]
-        public int TravelerID { get; set; }
+        [BsonElement("nic")]
+        public string NIC { get; set; }
 
         [BsonElement("reservationDate")]
         public DateTime ReservationDate { get; set; }

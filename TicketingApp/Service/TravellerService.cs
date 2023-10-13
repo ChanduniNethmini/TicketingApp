@@ -8,14 +8,17 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using TicketingApp.Models;
+using TicketingApp.Service;
 
 public class TravelerService
 {
     private readonly IMongoCollection<Traveller> _travellerCollection;
+    private readonly IMongoCollection<Reservation> _reservationCollection;
 
     public TravelerService(IMongoDatabase database)
     {
         _travellerCollection = database.GetCollection<Traveller>("travellers");
+        _reservationCollection = database.GetCollection<Reservation>("reservations");
     }
 
     public bool CreateTraveler(Traveller traveler)
@@ -53,7 +56,7 @@ public class TravelerService
         if (existingTraveler != null)
         {
             existingTraveler.NIC = nic;
-            _travellerCollection.ReplaceOne(r => r.NIC == nic, existingTraveler);
+            _travellerCollection.ReplaceOne(r => r.NIC == nic, traveler);
 
             return true;
         }
@@ -81,14 +84,18 @@ public class TravelerService
              .Find(r => r.NIC == nic)
              .FirstOrDefault();
 
-        if (existingTraveler != null)
+        if (existingTraveler != null && existingTraveler.Status != 1)
         {
             var update = Builders<Traveller>.Update.Set(t => t.Status, 1);
             existingTraveler.NIC = nic;
             _travellerCollection.UpdateOne(r => r.NIC == nic, update);
             return true;
         }
-        return false;
+        else
+        {
+            return false;
+        }
+
     }
 
     public bool DeactivateTraveler(string nic)
@@ -97,14 +104,24 @@ public class TravelerService
              .Find(r => r.NIC == nic)
              .FirstOrDefault();
 
-        if (existingTraveler != null)
+        if (existingTraveler != null && existingTraveler.Status != 0)
         {
             var update = Builders<Traveller>.Update.Set(t => t.Status, 0);
             existingTraveler.NIC = nic;
             _travellerCollection.UpdateOne(r => r.NIC == nic, update);
             return true;
         }
-        return false;
+        else
+        {
+            return false;
+        }
+    }
+
+    public List<Traveller> GetTravelerByNIC(string nic)
+    {
+        return _travellerCollection
+            .Find(r => r.NIC == nic && r.Status == 1)
+            .ToList();
     }
 
     public List<Traveller> GetAllTravelers()
@@ -127,6 +144,20 @@ public class TravelerService
 
     public string GenerateToken(string nic)
     {
+        var filter = Builders<Reservation>.Filter.Eq(r => r.NIC, nic);
+        List<Reservation> reservations = _reservationCollection.Find(filter).ToList();
+
+        foreach (Reservation reservation in reservations)
+        {
+            if (reservation.ReservationDate < DateTime.Now)
+            {
+                var updateFilter = Builders<Reservation>.Filter.Eq(r => r.NIC, reservation.NIC);
+                var update = Builders<Reservation>.Update.Set(r => r.Status, 2);
+                _reservationCollection.UpdateOne(updateFilter, update);
+            }
+        }
+
+
         // Generate a secure key
         var key = GenerateSecureKey();
 
