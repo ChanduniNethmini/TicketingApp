@@ -13,10 +13,10 @@ namespace TicketingApp.Models
         public string NIC { get; set; }
 
         [BsonElement("reservationDate")]
-        public DateTime ReservationDate { get; set; }
+        public string ReservationDate { get; set; }
 
         [BsonElement("bookingDate")]
-        public DateTime BookingDate { get; set; }
+        public string BookingDate { get; set; }
 
         [BsonElement("trainID")]
         public string TrainID { get; set; }
@@ -31,7 +31,7 @@ namespace TicketingApp.Models
         public string TrainClass { get; set; }
 
         [BsonElement("departureTime")]
-        public DateTime DepartureTime { get; set; }
+        public string DepartureTime { get; set; }
 
         [BsonElement("price")]
         public decimal Price { get; set; }

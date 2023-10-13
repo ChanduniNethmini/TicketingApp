@@ -139,16 +139,16 @@ namespace TicketingApp.Service
             var stoppingStation = trainSchedule.StoppingStations.Find(ss => ss.StationName == stationName);
             return stoppingStation != null ? stoppingStation.StationCount : 0;
         }
-        public DateTime GetArrivalTime(TrainSchedule trainSchedule, string stationName)
+        public string GetArrivalTime(TrainSchedule trainSchedule, string stationName)
         {
             var stoppingStation = trainSchedule.StoppingStations.FirstOrDefault(ss => ss.StationName == stationName);
-            return stoppingStation != null ? stoppingStation.ArrivalTime : DateTime.MinValue;
+            return stoppingStation != null ? stoppingStation.ArrivalTime : string.Empty;
         }
 
-        public DateTime GetDepartureTime(TrainSchedule trainSchedule, string stationName)
+        public string GetDepartureTime(TrainSchedule trainSchedule, string stationName)
         {
             var stoppingStation = trainSchedule.StoppingStations.FirstOrDefault(ss => ss.StationName == stationName);
-            return stoppingStation != null ? stoppingStation.DepartureTime : DateTime.MinValue;
+            return stoppingStation != null ? stoppingStation.DepartureTime : string.Empty;
         }
 
         private decimal CalculateTicketPrice(TrainSchedule trainSchedule, string startLocation, string destination)

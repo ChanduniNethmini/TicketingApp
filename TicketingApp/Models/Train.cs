@@ -13,10 +13,10 @@ namespace TicketingApp.Models
         public string Name { get; set; }
 
         [BsonElement("date")]
-        public DateTime Date { get; set; }
+        public string Date { get; set; }
 
         [BsonElement("startTime")]
-        public DateTime StartTime { get; set; }
+        public string StartTime { get; set; }
 
         [BsonElement("startLocation")]
         public string StartLocation { get; set; }
@@ -49,9 +49,9 @@ namespace TicketingApp.Models
         public int StationCount { get; set; }
 
         [BsonElement("arrivalTime")]
-        public DateTime ArrivalTime { get; set; }
+        public string ArrivalTime { get; set; }
 
         [BsonElement("departureTime")]
-        public DateTime DepartureTime { get; set; }
+        public string DepartureTime { get; set; }
     }
 }

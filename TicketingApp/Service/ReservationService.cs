@@ -23,7 +23,7 @@ namespace TicketingApp.Service
             {
                 NIC = reservation.NIC,
                 ReservationDate = reservation.ReservationDate,
-                BookingDate = DateTime.Now,
+                BookingDate = DateTime.Now.Date.ToString(),
                 TrainID = reservation.TrainID,
                 StartLocation = reservation.StartLocation,
                 Destination = reservation.Destination,
@@ -34,7 +34,13 @@ namespace TicketingApp.Service
                 Price = 0,
             };
 
-            if ((newReservation.ReservationDate - newReservation.BookingDate).Days <= 30)
+            DateTime reservationDate = DateTime.Parse(newReservation.ReservationDate);
+            DateTime bookingDate = DateTime.Parse(newReservation.BookingDate);
+
+            TimeSpan dateDifference = reservationDate - bookingDate;
+            int daysDifference = dateDifference.Days;
+
+            if (daysDifference <= 30)
             {
                 // Find the corresponding TrainService document
                 var trainServiceFilter = Builders<TrainSchedule>.Filter.Eq(ts => ts.ID, newReservation.TrainID)
@@ -104,7 +110,12 @@ namespace TicketingApp.Service
 
             if (existingReservation != null)
             {
-                if ((updatedReservation.ReservationDate - DateTime.Now).Days >= 5)
+                DateTime reservationDate = DateTime.Parse(updatedReservation.ReservationDate);
+
+                TimeSpan dateDifference = reservationDate - DateTime.Now.Date;
+                int daysDifference = dateDifference.Days;
+
+                if (daysDifference >= 5)
                 {
                     updatedReservation.ID = id;
                     _reservationCollection.ReplaceOne(r => r.ID == id, updatedReservation);
@@ -130,7 +141,12 @@ namespace TicketingApp.Service
 
             if (reservationToCancel != null)
             {
-                if ((reservationToCancel.ReservationDate - DateTime.Now).Days >= 5)
+                DateTime reservationDate = DateTime.Parse(reservationToCancel.ReservationDate);
+
+                TimeSpan dateDifference = reservationDate - DateTime.Now.Date;
+                int daysDifference = dateDifference.Days;
+
+                if (daysDifference >= 5)
                 {
                     reservationToCancel.Status = 3;
                     int newRemainingSeats = trainService.RemainingSeats + reservationToCancel.SeatCount;

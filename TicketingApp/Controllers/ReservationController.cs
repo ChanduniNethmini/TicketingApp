@@ -66,11 +66,11 @@ namespace TicketingApp.Controllers
         public ActionResult<List<Reservation>> GetAllReservations()
         {
             List<Reservation> reservations = _reservationService.GetAllReservations();
-            foreach (var reservation in reservations)
-            {
-                reservation.ReservationDate = reservation.ReservationDate.AddHours(5.5);
-                reservation.BookingDate = reservation.BookingDate.AddHours(5.5);
-            }
+            //foreach (var reservation in reservations)
+            //{
+            //    reservation.ReservationDate = reservation.ReservationDate.AddHours(5.5);
+            //    reservation.BookingDate = reservation.BookingDate.AddHours(5.5);
+            //}
             return Ok(reservations);
         }
 

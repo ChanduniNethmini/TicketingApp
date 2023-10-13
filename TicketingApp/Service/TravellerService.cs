@@ -149,11 +149,14 @@ public class TravelerService
 
         foreach (Reservation reservation in reservations)
         {
-            if (reservation.ReservationDate < DateTime.Now)
+            if (DateTime.TryParse(reservation.ReservationDate, out DateTime reservationDate))
             {
-                var updateFilter = Builders<Reservation>.Filter.Eq(r => r.NIC, reservation.NIC);
-                var update = Builders<Reservation>.Update.Set(r => r.Status, 2);
-                _reservationCollection.UpdateOne(updateFilter, update);
+                if (reservationDate < DateTime.Now)
+                {
+                    var updateFilter = Builders<Reservation>.Filter.Eq(r => r.NIC, reservation.NIC);
+                    var update = Builders<Reservation>.Update.Set(r => r.Status, 2);
+                    _reservationCollection.UpdateOne(updateFilter, update);
+                }
             }
         }
 
