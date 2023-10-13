@@ -50,6 +50,17 @@ namespace TicketingApp.Controllers
             return BadRequest("Reservation cancellation failed due to validation constraints or reservation not found.");
         }
 
+        [HttpGet("get/{id}")]
+        public ActionResult<List<Reservation>> GetReservationbyID(string id)
+        {
+            List<Reservation> reservations = _reservationService.GetReservationbyID(id);
+            if (reservations.Count != 0)
+            {
+                return Ok(reservations);
+            }
+            return BadRequest("Reservation not found.");
+        }
+
         [HttpGet("traveler/{nic}")]
         public ActionResult<List<Reservation>> GetExistingReservationsForTraveler(string nic)
         {
@@ -83,6 +94,25 @@ namespace TicketingApp.Controllers
                 return Ok(reservations);
             }
             return BadRequest("Reservation History not found.");
+        }
+
+        [HttpPut("update/confirm/{id}")]
+        public ActionResult ConfirmReservation(string id)
+        {
+            var traveler = _reservationService.GetReservationbyID(id);
+            if (traveler != null)
+            {
+                bool statusupdated = _reservationService.ConfirmReservation(id);
+                if (statusupdated)
+                {
+                    return Ok($"Reservation Confirmed successfully.");
+                }
+                return BadRequest("Reservation already Confirmed.");
+            }
+            else
+            {
+                return BadRequest("Reservation Confirmation failed due to Profile not found.");
+            }
         }
     }
 }

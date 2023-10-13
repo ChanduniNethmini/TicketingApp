@@ -29,7 +29,7 @@ namespace TicketingApp.Service
                 Destination = reservation.Destination,
                 TrainClass = reservation.TrainClass,
                 DepartureTime = reservation.DepartureTime,
-                Status = 1,
+                Status = 0,
                 SeatCount = reservation.SeatCount,
                 Price = 0,
             };
@@ -105,7 +105,7 @@ namespace TicketingApp.Service
         public bool UpdateReservation(string id, Reservation updatedReservation)
         {
             var existingReservation = _reservationCollection
-                .Find(r => r.ID == id && r.Status == 1)
+                .Find(r => r.ID == id && r.Status == 0)
                 .FirstOrDefault();
 
             if (existingReservation != null)
@@ -170,12 +170,12 @@ namespace TicketingApp.Service
 
 
         //Get a list of reservations for a specific traveler
-        // status = 1 means existing bookings
+        // status = 1 means bookings confirmed
         public List<Reservation> GetExistingReservationsForTraveler(string nic)
         {
 
             return _reservationCollection
-                .Find(r => r.NIC == nic && r.Status == 1)
+                .Find(r => r.NIC == nic && r.Status == 1 && r.Status == 0)
                 .ToList();
         }
 
@@ -184,8 +184,36 @@ namespace TicketingApp.Service
         {
 
             return _reservationCollection
-                .Find(r => r.NIC == nic && r.Status != 1)
+                .Find(r => r.NIC == nic && r.Status != 2)
                 .ToList();
+        }
+
+        public List<Reservation> GetReservationbyID(string id)
+        {
+
+            return _reservationCollection
+                .Find(r => r.ID == id && r.Status == 0)
+                .ToList();
+        }
+
+        public bool ConfirmReservation(string id)
+        {
+            var existingReservation = _reservationCollection
+                 .Find(r => r.ID == id)
+                 .FirstOrDefault();
+
+            if (existingReservation != null && existingReservation.Status != 1)
+            {
+                var update = Builders<Reservation>.Update.Set(t => t.Status, 1);
+                existingReservation.ID = id;
+                _reservationCollection.UpdateOne(r => r.ID == id, update);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
         }
     }
 }
