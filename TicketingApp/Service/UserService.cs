@@ -116,11 +116,11 @@ public class UserService
 
     public bool AuthenticateUser(string email, string password)
     {
-        var existingTraveler = _userCollection
+        var existingUser = _userCollection
             .Find(r => r.Email == email)
             .FirstOrDefault();
 
-        if (existingTraveler != null && existingTraveler.Password == password)
+        if (existingUser != null && existingUser.Password == password)
         {
             return true;
         }
@@ -129,22 +129,31 @@ public class UserService
 
     public string GenerateToken(string email)
     {
-        var filter = Builders<TrainSchedule>.Filter.And(
+        var existingUser = _userCollection
+            .Find(r => r.Email == email)
+            .FirstOrDefault();
+
+        if (existingUser.Role == "BOfficer")
+        {
+            var filter = Builders<TrainSchedule>.Filter.And(
             Builders<TrainSchedule>.Filter.Eq("IsActive", 1),
             Builders<TrainSchedule>.Filter.Lte("StartTime", DateTime.Now)
             );
 
-        List<TrainSchedule> TrainSchedules = _trainScheduleCollection.Find(filter).ToList();
+            List<TrainSchedule> TrainSchedules = _trainScheduleCollection.Find(filter).ToList();
 
-        foreach (TrainSchedule trainSchedule in TrainSchedules)
-        {
-            if (trainSchedule.StartTime < DateTime.Now)
+            foreach (TrainSchedule trainSchedule in TrainSchedules)
             {
-                var updateFilter = Builders<TrainSchedule>.Filter.Eq(r => r.ID, trainSchedule.ID);
-                var update = Builders<TrainSchedule>.Update.Set(r => r.IsActive, 0);
-                _trainScheduleCollection.UpdateOne(updateFilter, update);
+                if (trainSchedule.StartTime < DateTime.Now)
+                {
+                    var updateFilter = Builders<TrainSchedule>.Filter.Eq(r => r.ID, trainSchedule.ID);
+                    var update = Builders<TrainSchedule>.Update.Set(r => r.IsActive, 0);
+                    _trainScheduleCollection.UpdateOne(updateFilter, update);
+                }
             }
         }
+
+
         // Generate a secure key
         var key = GenerateSecureKey();
 

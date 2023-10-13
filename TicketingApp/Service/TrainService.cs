@@ -66,7 +66,7 @@ namespace TicketingApp.Service
             {
                 if (trainScheduleToCancel.RemainingSeats == trainScheduleToCancel.SeatCount)
                 {
-                    _trainScheduleCollection.ReplaceOne(r => r.ID == id, trainScheduleToCancel);
+                    _trainScheduleCollection.DeleteOne(r => r.ID == id);
                     return true;
                 }
                 else
