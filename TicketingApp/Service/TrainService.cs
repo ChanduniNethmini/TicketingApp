@@ -1,4 +1,5 @@
 ﻿using MongoDB.Driver;
+using System.Globalization;
 using TicketingApp.Dtos;
 using TicketingApp.Models;
 
@@ -80,8 +81,7 @@ namespace TicketingApp.Service
         public List<TrainSchedule> GetAllOngoingTrains()
         {
             var filter = Builders<TrainSchedule>.Filter.And(
-            Builders<TrainSchedule>.Filter.Eq("IsActive", 1),
-            Builders<TrainSchedule>.Filter.Gte("StartTime", DateTime.Now)
+            Builders<TrainSchedule>.Filter.Eq("IsActive", 1)
             );
 
             return _trainScheduleCollection
@@ -97,11 +97,10 @@ namespace TicketingApp.Service
                 .ToList();
         }
 
-        public List<TrainSearchResult> SearchTrains(string fromStationName, string toStationName, DateTime date, int minAvailableSeatCount)
+        public List<TrainSearchResult> SearchTrains(string fromStationName, string toStationName, string date, int minAvailableSeatCount)
         {
             var filterBuilder = Builders<TrainSchedule>.Filter;
-            var filter = filterBuilder.Gte("Date", date) &
-                         filterBuilder.Lt("Date", date.AddDays(1)) &
+            var filter = filterBuilder.Eq("Date", date) &
                          filterBuilder.Gte("RemainingSeats", minAvailableSeatCount) &
                          filterBuilder.Eq("IsActive", 1);
 
@@ -109,6 +108,7 @@ namespace TicketingApp.Service
             var matchingTrains = _trainScheduleCollection
                 .Find(filter)
                 .ToList();
+
 
             // Filter and calculate the ticket price in memory
             var searchResults = matchingTrains
@@ -132,6 +132,7 @@ namespace TicketingApp.Service
                 .ToList();
 
             return searchResults;
+
         }
 
         private int GetStationCount(TrainSchedule trainSchedule, string stationName)

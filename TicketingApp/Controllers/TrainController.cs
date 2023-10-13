@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
 using TicketingApp.Dtos;
 using TicketingApp.Models;
 using TicketingApp.Service;
@@ -74,19 +75,22 @@ namespace TicketingApp.Controllers
         public ActionResult<List<TrainSearchResult>> SearchTrains(
         [FromQuery] string fromStationName,
         [FromQuery] string toStationName,
-        [FromQuery] DateTime date,
+        [FromQuery] string date,
         [FromQuery] int minAvailableSeatCount = 1)
         {
-            if (date.Date > DateTime.Now.Date)
+            if (DateTime.TryParseExact(date, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedDate))
             {
-                List<TrainSearchResult> matchingTrains = _trainService.SearchTrains(fromStationName, toStationName, date, minAvailableSeatCount);
-
-                if (matchingTrains.Count > 0)
+                if (parsedDate > DateTime.Now.Date)
                 {
-                    return Ok(matchingTrains);
-                }
+                    List<TrainSearchResult> matchingTrains = _trainService.SearchTrains(fromStationName, toStationName, date, minAvailableSeatCount);
 
-                return BadRequest("No matching trains found.");
+                    if (matchingTrains.Count > 0)
+                    {
+                        return Ok(matchingTrains);
+                    }
+
+                    return BadRequest("No matching trains found.");
+                }
             }
 
             return BadRequest("Booking must be made at least one day before the booking date.");
