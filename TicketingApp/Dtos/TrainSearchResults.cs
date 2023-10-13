@@ -2,6 +2,7 @@
 {
     public class TrainSearchResult
     {
+        public string ID { get; set; }
         public string Name { get; set; }
         public string Date { get; set; }
         public string TrainClass { get; set; }

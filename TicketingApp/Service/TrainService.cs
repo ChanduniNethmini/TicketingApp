@@ -118,6 +118,7 @@ namespace TicketingApp.Service
                     GetStationCount(trainSchedule, fromStationName) < GetStationCount(trainSchedule, toStationName))
                 .Select(trainSchedule => new TrainSearchResult
                 {
+                    ID = trainSchedule.ID,
                     Name = trainSchedule.Name,
                     Date = trainSchedule.Date,
                     StartLocation = fromStationName,
