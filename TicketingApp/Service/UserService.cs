@@ -11,10 +11,12 @@ using TicketingApp.Models;
 public class UserService
 {
     private readonly IMongoCollection<Users> _userCollection;
+    private readonly IMongoCollection<TrainSchedule> _trainScheduleCollection;
 
     public UserService(IMongoDatabase database)
     {
         _userCollection = database.GetCollection<Users>("users");
+        _trainScheduleCollection = database.GetCollection<TrainSchedule>("trainSchedule");
     }
 
     public bool CreateUser(Users users)
@@ -127,6 +129,22 @@ public class UserService
 
     public string GenerateToken(string email)
     {
+        var filter = Builders<TrainSchedule>.Filter.And(
+            Builders<TrainSchedule>.Filter.Eq("IsActive", 1),
+            Builders<TrainSchedule>.Filter.Lte("StartTime", DateTime.Now)
+            );
+
+        List<TrainSchedule> TrainSchedules = _trainScheduleCollection.Find(filter).ToList();
+
+        foreach (TrainSchedule trainSchedule in TrainSchedules)
+        {
+            if (trainSchedule.StartTime < DateTime.Now)
+            {
+                var updateFilter = Builders<TrainSchedule>.Filter.Eq(r => r.ID, trainSchedule.ID);
+                var update = Builders<TrainSchedule>.Update.Set(r => r.IsActive, 0);
+                _trainScheduleCollection.UpdateOne(updateFilter, update);
+            }
+        }
         // Generate a secure key
         var key = GenerateSecureKey();
 
