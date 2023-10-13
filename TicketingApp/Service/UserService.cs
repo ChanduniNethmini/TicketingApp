@@ -144,11 +144,14 @@ public class UserService
 
             foreach (TrainSchedule trainSchedule in TrainSchedules)
             {
-                if (trainSchedule.StartTime < DateTime.Now)
+                if (DateTime.TryParse(trainSchedule.StartTime, out DateTime StartTime))
                 {
-                    var updateFilter = Builders<TrainSchedule>.Filter.Eq(r => r.ID, trainSchedule.ID);
-                    var update = Builders<TrainSchedule>.Update.Set(r => r.IsActive, 0);
-                    _trainScheduleCollection.UpdateOne(updateFilter, update);
+                    if (StartTime < DateTime.Now)
+                    {
+                        var updateFilter = Builders<TrainSchedule>.Filter.Eq(r => r.ID, trainSchedule.ID);
+                        var update = Builders<TrainSchedule>.Update.Set(r => r.IsActive, 0);
+                        _trainScheduleCollection.UpdateOne(updateFilter, update);
+                    }
                 }
             }
         }
