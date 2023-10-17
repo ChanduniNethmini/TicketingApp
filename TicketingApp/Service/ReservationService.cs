@@ -117,6 +117,7 @@ namespace TicketingApp.Service
 
                 if (daysDifference >= 5)
                 {
+                    updatedReservation.Price = (existingReservation.Price / existingReservation.SeatCount) * updatedReservation.SeatCount;
                     updatedReservation.ID = id;
                     _reservationCollection.ReplaceOne(r => r.ID == id, updatedReservation);
                     return true;
@@ -134,8 +135,7 @@ namespace TicketingApp.Service
                 .Find(r => r.ID == reservationId && r.Status != 3 && r.Status != 2)
                 .FirstOrDefault();
 
-            var trainServiceFilter = Builders<TrainSchedule>.Filter.Eq(ts => ts.ID, reservationToCancel.ID)
-                    & Builders<TrainSchedule>.Filter.Eq(ts => ts.Date, reservationToCancel.ReservationDate);
+            var trainServiceFilter = Builders<TrainSchedule>.Filter.Eq(ts => ts.ID, reservationToCancel.TrainID);
 
             var trainService = _trainScheduleCollection.Find(trainServiceFilter).FirstOrDefault();
 
