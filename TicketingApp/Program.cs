@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
+using System;
 using System.Text;
 using TicketingApp.Service;
 
@@ -24,7 +25,7 @@ var mongoDatabase = mongoClient.GetDatabase(databaseName);
 
 builder.Services.AddSingleton<IMongoDatabase>(mongoDatabase); // Register IMongoDatabase
 
-//Add mongoIdentityConfiguration
+// Add mongoIdentityConfiguration
 var mongoDbIdentityConfig = new MongoDbIdentityConfiguration
 {
     MongoDbSettings = new MongoDbSettings
@@ -39,7 +40,7 @@ var mongoDbIdentityConfig = new MongoDbIdentityConfiguration
         options.Password.RequireNonAlphanumeric = true;
         options.Password.RequireLowercase = false;
 
-        //lockout
+        // Lockout
         options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
         options.Lockout.MaxFailedAccessAttempts = 5;
 
@@ -54,28 +55,27 @@ builder.Services.AddSingleton<TrainService>();
 builder.Services.AddSingleton<TravelerService>();
 builder.Services.AddSingleton<UserService>();
 
-builder.Services.AddAuthentication(x =>
-{
-    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+//builder.Services.AddAuthentication(x =>
+//{
+//    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+//    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 
-
-}).AddJwtBearer(x =>
-{
-    x.RequireHttpsMetadata = true;
-    x.SaveToken = true;
-    x.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuerSigningKey = true,
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidIssuer = "https://localhost:5001",
-        ValidAudience = "https://localhost:5001",
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("1swek3u4uo2u4a6e")),
-        ClockSkew = TimeSpan.Zero
-    };
-});
+//}).AddJwtBearer(x =>
+//{
+//    x.RequireHttpsMetadata = true;
+//    x.SaveToken = true;
+//    x.TokenValidationParameters = new TokenValidationParameters
+//    {
+//        ValidateIssuerSigningKey = true,
+//        ValidateIssuer = true;
+//    ValidateAudience = true;
+//    ValidateLifetime = true;
+//    ValidIssuer = "https://localhost:5001";
+//    ValidAudience = "https://localhost:5001";
+//    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("1swek3u4uo2u4a6e"));
+//    ClockSkew = TimeSpan.Zero;
+//};
+//});
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -83,6 +83,14 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+// Add CORS services
+app.UseCors(options =>
+{
+    options.AllowAnyOrigin()
+           .AllowAnyMethod()
+           .AllowAnyHeader();
+});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -92,10 +100,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
 app.UseAuthentication();
-
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();
