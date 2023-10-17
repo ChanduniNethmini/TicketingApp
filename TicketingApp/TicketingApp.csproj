@@ -7,9 +7,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<Compile Remove="Controllers\ReservationControllerNew.cs" />
 		<Compile Remove="Controllers\StationController.cs" />
+		<Compile Remove="Models\ReservationNew.cs" />
 		<Compile Remove="Models\Station.cs" />
 		<Compile Remove="Models\User.cs" />
+		<Compile Remove="Service\ReservationServiceNew.cs" />
 		<Compile Remove="Service\StationService.cs" />
 	</ItemGroup>
 

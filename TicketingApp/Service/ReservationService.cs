@@ -23,7 +23,7 @@ namespace TicketingApp.Service
             {
                 NIC = reservation.NIC,
                 ReservationDate = reservation.ReservationDate,
-                BookingDate = DateTime.Now.Date.ToString(),
+                BookingDate = DateTime.Now.Date.ToString("yyyy-MM-dd"),
                 TrainID = reservation.TrainID,
                 StartLocation = reservation.StartLocation,
                 Destination = reservation.Destination,
