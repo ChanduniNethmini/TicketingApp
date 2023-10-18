@@ -54,6 +54,7 @@ builder.Services.AddSingleton<ReservationService>();
 builder.Services.AddSingleton<TrainService>();
 builder.Services.AddSingleton<TravelerService>();
 builder.Services.AddSingleton<UserService>();
+builder.Services.AddSingleton<ResNewService>();
 
 //builder.Services.AddAuthentication(x =>
 //{
