@@ -183,6 +183,15 @@ namespace TicketingApp.Service
 
             return 0;
         }
+        public List<TrainSchedule> GetAllTrainHistory()
+        {
+            var filter = Builders<TrainSchedule>.Filter.And(
+            Builders<TrainSchedule>.Filter.Eq("IsActive", 0)
+            );
 
+            return _trainScheduleCollection
+                .Find(filter)
+                .ToList();
+        }
     }
 }

@@ -96,7 +96,13 @@ namespace TicketingApp.Controllers
             return BadRequest("Booking must be made at least one day before the booking date.");
         }
 
-
+        [HttpGet]
+        [Route("history/getAll")]
+        public ActionResult<List<TrainSchedule>> GetAllTrainHistory()
+        {
+            List<TrainSchedule> trainSchedules = _trainService.GetAllTrainHistory();
+            return Ok(trainSchedules);
+        }
 
     }
 }
