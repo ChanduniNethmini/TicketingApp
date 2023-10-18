@@ -21,6 +21,9 @@ namespace TicketingApp.Models
         [BsonElement("trainID")]
         public string TrainID { get; set; }
 
+        [BsonElement("trainName")]
+        public string TrainName { get; set; }
+
         [BsonElement("startLocation")]
         public string StartLocation { get; set; }
 
@@ -34,13 +37,13 @@ namespace TicketingApp.Models
         public string DepartureTime { get; set; }
 
         [BsonElement("price")]
-        public decimal Price { get; set; }
+        public string Price { get; set; }
 
         [BsonElement("seatCount")]
-        public int SeatCount { get; set; }
+        public string SeatCount { get; set; }
 
         [BsonElement("status")]
-        public int Status { get; set; }
+        public string Status { get; set; }
     }
 
 }

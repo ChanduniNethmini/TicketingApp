@@ -25,13 +25,14 @@ namespace TicketingApp.Service
                 ReservationDate = reservation.ReservationDate,
                 BookingDate = DateTime.Now.Date.ToString("yyyy-MM-dd"),
                 TrainID = reservation.TrainID,
+                TrainName = reservation.TrainName,
                 StartLocation = reservation.StartLocation,
                 Destination = reservation.Destination,
                 TrainClass = reservation.TrainClass,
                 DepartureTime = reservation.DepartureTime,
-                Status = 0,
+                Status = "0",
                 SeatCount = reservation.SeatCount,
-                Price = 0,
+                Price = "0",
             };
 
             DateTime reservationDate = DateTime.Parse(newReservation.ReservationDate);
@@ -71,12 +72,12 @@ namespace TicketingApp.Service
                     }
 
                     // Calculate new RemainingSeats
-                    int newRemainingSeats = trainService.RemainingSeats - newReservation.SeatCount;
+                    int newRemainingSeats = trainService.RemainingSeats - int.Parse(newReservation.SeatCount);
 
                     if (newRemainingSeats >= 0)
                     {
                         var existingReservations = _reservationCollection
-                        .Find(r => r.NIC == newReservation.NIC && r.Status == 1)
+                        .Find(r => r.NIC == newReservation.NIC && r.Status == "1")
                         .ToList();
 
                         if (existingReservations.Count >= 4)
@@ -87,7 +88,7 @@ namespace TicketingApp.Service
                         // Update RemainingSeats in TrainService
                         var update = Builders<TrainSchedule>.Update.Set(ts => ts.RemainingSeats, newRemainingSeats);
                         _trainScheduleCollection.UpdateOne(trainServiceFilter, update);
-                        newReservation.Price = price * newReservation.SeatCount;
+                        newReservation.Price = (price * int.Parse(newReservation.SeatCount)).ToString();
                         _reservationCollection.InsertOne(newReservation);
                         return true;
                     }
@@ -105,7 +106,7 @@ namespace TicketingApp.Service
         public bool UpdateReservation(string id, Reservation updatedReservation)
         {
             var existingReservation = _reservationCollection
-                .Find(r => r.ID == id && r.Status == 0)
+                .Find(r => r.ID == id && r.Status == "0")
                 .FirstOrDefault();
 
             if (existingReservation != null)
@@ -117,7 +118,7 @@ namespace TicketingApp.Service
 
                 if (daysDifference >= 5)
                 {
-                    updatedReservation.Price = (existingReservation.Price / existingReservation.SeatCount) * updatedReservation.SeatCount;
+                    updatedReservation.Price = ((int.Parse(existingReservation.Price) / int.Parse(existingReservation.SeatCount)) * int.Parse(updatedReservation.SeatCount)).ToString();
                     updatedReservation.ID = id;
                     _reservationCollection.ReplaceOne(r => r.ID == id, updatedReservation);
                     return true;
@@ -132,7 +133,7 @@ namespace TicketingApp.Service
         public bool CancelReservation(string reservationId)
         {
             var reservationToCancel = _reservationCollection
-                .Find(r => r.ID == reservationId && r.Status != 3 && r.Status != 2)
+                .Find(r => r.ID == reservationId && r.Status != "3" && r.Status != "2")
                 .FirstOrDefault();
 
             var trainServiceFilter = Builders<TrainSchedule>.Filter.Eq(ts => ts.ID, reservationToCancel.TrainID);
@@ -148,8 +149,8 @@ namespace TicketingApp.Service
 
                 if (daysDifference >= 5)
                 {
-                    reservationToCancel.Status = 3;
-                    int newRemainingSeats = trainService.RemainingSeats + reservationToCancel.SeatCount;
+                    reservationToCancel.Status = "3";
+                    int newRemainingSeats = trainService.RemainingSeats + int.Parse(reservationToCancel.SeatCount);
                     var update = Builders<TrainSchedule>.Update.Set(ts => ts.RemainingSeats, newRemainingSeats);
                     _trainScheduleCollection.UpdateOne(trainServiceFilter, update);
                     _reservationCollection.ReplaceOne(r => r.ID == reservationId, reservationToCancel);
@@ -164,7 +165,7 @@ namespace TicketingApp.Service
         public List<Reservation> GetAllReservations()
         {
             return _reservationCollection
-                .Find(r => r.Status != 3)
+                .Find(r => r.Status != "3")
                 .ToList();
         }
 
@@ -175,7 +176,7 @@ namespace TicketingApp.Service
         {
 
             return _reservationCollection
-                .Find(r => r.NIC == nic && r.Status == 1 && r.Status == 0)
+                .Find(r => r.NIC == nic && r.Status == "1" && r.Status == "0")
                 .ToList();
         }
 
@@ -184,7 +185,7 @@ namespace TicketingApp.Service
         {
 
             return _reservationCollection
-                .Find(r => r.NIC == nic && r.Status != 2)
+                .Find(r => r.NIC == nic && r.Status != "2")
                 .ToList();
         }
 
@@ -192,7 +193,7 @@ namespace TicketingApp.Service
         {
 
             return _reservationCollection
-                .Find(r => r.ID == id && r.Status == 0)
+                .Find(r => r.ID == id && r.Status == "0")
                 .ToList();
         }
 
@@ -202,9 +203,9 @@ namespace TicketingApp.Service
                  .Find(r => r.ID == id)
                  .FirstOrDefault();
 
-            if (existingReservation != null && existingReservation.Status != 1)
+            if (existingReservation != null && existingReservation.Status != "1")
             {
-                var update = Builders<Reservation>.Update.Set(t => t.Status, 1);
+                var update = Builders<Reservation>.Update.Set(t => t.Status, "1");
                 existingReservation.ID = id;
                 _reservationCollection.UpdateOne(r => r.ID == id, update);
                 return true;
