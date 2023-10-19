@@ -71,7 +71,6 @@ namespace TicketingApp.Service
                         price = (decimal)(Tdestination.StationCount - TstartLocation.StationCount) * 50;
                     }
 
-                    // Calculate new RemainingSeats
                     int newRemainingSeats = trainService.RemainingSeats - int.Parse(newReservation.SeatCount);
 
                     if (newRemainingSeats >= 0)
