@@ -125,6 +125,7 @@ namespace TicketingApp.Service
                     Destination = toStationName,
                     TrainClass = trainSchedule.TrainClass,
                     AvailableSeats = trainSchedule.RemainingSeats,
+                    SeatCount = minAvailableSeatCount,
                     TicketPrice = CalculateTicketPrice(trainSchedule, fromStationName, toStationName),
                     TotalPrice = CalculateTicketPrice(trainSchedule, fromStationName, toStationName) * minAvailableSeatCount,
                     StartLocationArrivalTime = GetArrivalTime(trainSchedule, fromStationName),

@@ -50,33 +50,21 @@ var mongoDbIdentityConfig = new MongoDbIdentityConfiguration
 
 };
 
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
 builder.Services.AddSingleton<ReservationService>();
 builder.Services.AddSingleton<TrainService>();
 builder.Services.AddSingleton<TravelerService>();
 builder.Services.AddSingleton<UserService>();
 builder.Services.AddSingleton<ResNewService>();
 
-//builder.Services.AddAuthentication(x =>
-//{
-//    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-//    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 
-//}).AddJwtBearer(x =>
-//{
-//    x.RequireHttpsMetadata = true;
-//    x.SaveToken = true;
-//    x.TokenValidationParameters = new TokenValidationParameters
-//    {
-//        ValidateIssuerSigningKey = true,
-//        ValidateIssuer = true;
-//    ValidateAudience = true;
-//    ValidateLifetime = true;
-//    ValidIssuer = "https://localhost:5001";
-//    ValidAudience = "https://localhost:5001";
-//    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("1swek3u4uo2u4a6e"));
-//    ClockSkew = TimeSpan.Zero;
-//};
-//});
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
