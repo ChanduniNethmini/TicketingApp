@@ -120,7 +120,7 @@ public class TravelerService
     public List<Traveller> GetTravelerByNIC(string nic)
     {
         return _travellerCollection
-            .Find(r => r.NIC == nic && r.Status == 1)
+            .Find(r => r.NIC == nic)
             .ToList();
     }
 
