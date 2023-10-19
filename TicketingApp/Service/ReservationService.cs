@@ -77,7 +77,7 @@ namespace TicketingApp.Service
                     if (newRemainingSeats >= 0)
                     {
                         var existingReservations = _reservationCollection
-                        .Find(r => r.NIC == newReservation.NIC && r.Status == "1")
+                        .Find(r => r.NIC == newReservation.NIC && r.Status == "1" && r.Status == "0")
                         .ToList();
 
                         if (existingReservations.Count >= 4)
