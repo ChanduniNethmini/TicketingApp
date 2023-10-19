@@ -77,7 +77,7 @@ namespace TicketingApp.Service
                     if (newRemainingSeats >= 0)
                     {
                         var existingReservations = _reservationCollection
-                        .Find(r => r.NIC == newReservation.NIC && r.Status == "1" && r.Status == "0")
+                        .Find(r => r.NIC == newReservation.NIC && (r.Status == "1" || r.Status == "0"))
                         .ToList();
 
                         if (existingReservations.Count >= 4)
@@ -133,7 +133,7 @@ namespace TicketingApp.Service
         public bool CancelReservation(string reservationId)
         {
             var reservationToCancel = _reservationCollection
-                .Find(r => r.ID == reservationId && r.Status != "3" && r.Status != "2")
+                .Find(r => r.ID == reservationId && (r.Status != "3" || r.Status != "2"))
                 .FirstOrDefault();
 
             var trainServiceFilter = Builders<TrainSchedule>.Filter.Eq(ts => ts.ID, reservationToCancel.TrainID);
@@ -176,7 +176,7 @@ namespace TicketingApp.Service
         {
 
             return _reservationCollection
-                .Find(r => r.NIC == nic && r.Status == "1" && r.Status == "0")
+                .Find(r => r.NIC == nic && (r.Status == "1" || r.Status == "0"))
                 .ToList();
         }
 
