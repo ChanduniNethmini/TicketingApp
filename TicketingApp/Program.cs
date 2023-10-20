@@ -23,7 +23,7 @@ var databaseName = "TicketingApplication";
 var mongoClient = new MongoClient(connectionString);
 var mongoDatabase = mongoClient.GetDatabase(databaseName);
 
-builder.Services.AddSingleton<IMongoDatabase>(mongoDatabase); // Register IMongoDatabase
+builder.Services.AddSingleton<IMongoDatabase>(mongoDatabase);
 
 // Add mongoIdentityConfiguration
 var mongoDbIdentityConfig = new MongoDbIdentityConfiguration
@@ -62,12 +62,10 @@ builder.Services.AddSingleton<ReservationService>();
 builder.Services.AddSingleton<TrainService>();
 builder.Services.AddSingleton<TravelerService>();
 builder.Services.AddSingleton<UserService>();
-builder.Services.AddSingleton<ResNewService>();
 
 
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

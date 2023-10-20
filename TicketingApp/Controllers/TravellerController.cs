@@ -1,9 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using TicketingApp.Models;
-using TicketingApp.Service;
 
 namespace TicketingApp.Controllers
 {
@@ -33,8 +29,6 @@ namespace TicketingApp.Controllers
 
             if (authenticated)
             {
-                HttpContext.Session.SetString("NIC", nic);
-
                 // Generate and return an authentication token (JWT) as a response
                 string token = _travelerService.GenerateToken(nic);
 

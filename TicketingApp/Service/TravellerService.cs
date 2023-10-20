@@ -30,8 +30,8 @@ public class TravelerService
             Phone = traveler.Phone,
             DOB = traveler.DOB,
             Email = traveler.Email,
-            Password = traveler.Password,
-            ConfirmPassword = traveler.ConfirmPassword,
+            Password = BCrypt.Net.BCrypt.HashPassword(traveler.Password),
+            ConfirmPassword = BCrypt.Net.BCrypt.HashPassword(traveler.ConfirmPassword),
             Status = 1
         };
 
@@ -135,7 +135,7 @@ public class TravelerService
             .Find(r => r.NIC == nic)
             .FirstOrDefault();
 
-        if (existingTraveler != null && existingTraveler.Password == password)
+        if (existingTraveler != null && BCrypt.Net.BCrypt.Verify(password, existingTraveler.Password))
         {
             return true;
         }

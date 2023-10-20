@@ -28,8 +28,8 @@ public class UserService
             Phone = users.Phone,
             DOB = users.DOB,
             Email = users.Email,
-            Password = users.Password,
-            ConfirmPassword = users.ConfirmPassword,
+            Password = BCrypt.Net.BCrypt.HashPassword(users.Password),
+            ConfirmPassword = BCrypt.Net.BCrypt.HashPassword(users.ConfirmPassword),
             Status = 1,
             Role = users.Role,
         };
@@ -120,7 +120,7 @@ public class UserService
             .Find(r => r.Email == email)
             .FirstOrDefault();
 
-        if (existingUser != null && existingUser.Password == password)
+        if (existingUser != null && BCrypt.Net.BCrypt.Verify(password, existingUser.Password))
         {
             return true;
         }
