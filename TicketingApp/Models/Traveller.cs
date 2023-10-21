@@ -21,7 +21,7 @@ namespace TicketingApp.Models
         public string Phone { get; set; }
 
         [BsonElement("dob")]
-        public DateTime DOB { get; set; }
+        public string DOB { get; set; }
 
         [BsonElement("email")]
         public string Email { get; set; }
