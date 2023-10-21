@@ -30,7 +30,7 @@ namespace TicketingApp.Service
                 Destination = reservation.Destination,
                 TrainClass = reservation.TrainClass,
                 DepartureTime = reservation.DepartureTime,
-                Status = "0",
+                Status = "1",
                 SeatCount = reservation.SeatCount,
                 Price = "0",
             };
