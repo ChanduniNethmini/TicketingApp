@@ -112,5 +112,16 @@ namespace TicketingApp.Controllers
             }
             return BadRequest("Users not found.");
         }
+
+        [HttpGet("get/{id}")]
+        public ActionResult<List<Users>> GetUserByNIC(string id)
+        {
+            List<Users> users = _userService.GetUserByNIC(id);
+            if (users.Count != 0)
+            {
+                return Ok(users);
+            }
+            return BadRequest("Traveler not found.");
+        }
     }
 }

@@ -186,4 +186,11 @@ public class UserService
             return key;
         }
     }
+
+    public List<Users> GetUserByNIC(string id)
+    {
+        return _userCollection
+            .Find(r => r.ID == id)
+            .ToList();
+    }
 }
