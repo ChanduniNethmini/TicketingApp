@@ -127,6 +127,7 @@ public class UserService
 
             return existingUser2;
         }
+        return new List<Users>();
     }
 
     public string GenerateToken(string email)
@@ -167,7 +168,6 @@ public class UserService
             Subject = new ClaimsIdentity(new[]
             {
             new Claim(ClaimTypes.Name, email),
-            new Claim("Role", existingUser.Role)
         }),
             Expires = DateTime.UtcNow.AddHours(1),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
