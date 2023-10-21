@@ -114,7 +114,7 @@ public class UserService
         return _userCollection.AsQueryable().ToList();
     }
 
-    public bool AuthenticateUser(string email, string password)
+    public List<Users> AuthenticateUser(string email, string password)
     {
         var existingUser = _userCollection
             .Find(r => r.Email == email)
@@ -122,9 +122,11 @@ public class UserService
 
         if (existingUser != null && BCrypt.Net.BCrypt.Verify(password, existingUser.Password))
         {
-            return true;
+            var existingUser2 = _userCollection
+            .Find(r => r.Email == email).ToList();
+
+            return existingUser2;
         }
-        return false;
     }
 
     public string GenerateToken(string email)
@@ -136,8 +138,8 @@ public class UserService
         if (existingUser.Role == "BOfficer")
         {
             var filter = Builders<TrainSchedule>.Filter.And(
-            Builders<TrainSchedule>.Filter.Eq("IsActive", 1),
-            Builders<TrainSchedule>.Filter.Lte("StartTime", DateTime.Now)
+                Builders<TrainSchedule>.Filter.Eq("IsActive", 1),
+                Builders<TrainSchedule>.Filter.Lte("StartTime", DateTime.Now)
             );
 
             List<TrainSchedule> TrainSchedules = _trainScheduleCollection.Find(filter).ToList();
@@ -156,7 +158,6 @@ public class UserService
             }
         }
 
-
         // Generate a secure key
         var key = GenerateSecureKey();
 
@@ -165,14 +166,16 @@ public class UserService
         {
             Subject = new ClaimsIdentity(new[]
             {
-                new Claim(ClaimTypes.Name, email)
-            }),
+            new Claim(ClaimTypes.Name, email),
+            new Claim("Role", existingUser.Role)
+        }),
             Expires = DateTime.UtcNow.AddHours(1),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
         };
         var token = tokenHandler.CreateToken(tokenDescriptor);
         return tokenHandler.WriteToken(token);
     }
+
 
     private byte[] GenerateSecureKey()
     {

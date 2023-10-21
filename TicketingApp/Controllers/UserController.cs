@@ -28,14 +28,18 @@ namespace TicketingApp.Controllers
             }
 
             // Call your authentication service to verify the user's credentials
-            bool authenticated = _userService.AuthenticateUser(email, password);
+            List<Users> authenticatedUsers = _userService.AuthenticateUser(email, password);
 
-            if (authenticated)
+            if (authenticatedUsers.Count > 0)
             {
+                var authenticatedUser = authenticatedUsers[0];
+
+                string userRole = authenticatedUser.Role;
+
                 // Generate and return an authentication token (JWT) as a response
                 string token = _userService.GenerateToken(email);
 
-                return Ok(new { Token = token, Message = "Login successful." });
+                return Ok(new { Token = token, userRole, Message = "Login successful." });
             }
 
             return Unauthorized("Invalid email or password.");
